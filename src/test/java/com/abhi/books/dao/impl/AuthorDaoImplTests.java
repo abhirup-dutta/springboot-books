@@ -7,7 +7,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
@@ -18,7 +20,7 @@ public class AuthorDaoImplTests {
     private JdbcTemplate jdbcTemplate;
 
     @InjectMocks
-    private AuthorDaoImpl authorDaoTest;
+    private AuthorDaoImpl testAuthorDao;
 
     @Test
     public void test_CreateAuthor() {
@@ -34,7 +36,7 @@ public class AuthorDaoImplTests {
          * When create() is invoked, it uses the jdbcTemplate for DB update
          * However, here a mocked jdbcTemplate is used.
          */
-        authorDaoTest.create(testAuthor);
+        testAuthorDao.create(testAuthor);
 
         /*
          * Here, verify verifies if the mocked entity was interacted with
@@ -50,6 +52,20 @@ public class AuthorDaoImplTests {
                 eq(testAuthor.getId()),
                 eq(testAuthor.getName()),
                 eq(testAuthor.getAge())
+        );
+    }
+
+    @Test
+    public void test_FindById() {
+
+        long testAuthorId = 1L;
+
+        testAuthorDao.findById(testAuthorId);
+
+        verify(jdbcTemplate).query(
+          eq("SELECT id, name, age FROM authors WHERE id = ? LIMIT 1"),
+          any(AuthorDaoImpl.AuthorRowMapper.class),
+          eq(testAuthorId)
         );
     }
 }
