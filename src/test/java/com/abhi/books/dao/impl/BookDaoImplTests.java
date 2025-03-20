@@ -1,5 +1,6 @@
 package com.abhi.books.dao.impl;
 
+import com.abhi.books.TestUtil;
 import com.abhi.books.domain.Book;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,11 +28,7 @@ public class BookDaoImplTests {
 
     @Test
     public void test_CreateBook() {
-        Book testBook = Book.builder()
-                .isbn("M7B59")
-                .title("The Left Hand of Darkness")
-                .authorId(1L)
-                .build();
+        Book testBook = TestUtil.getTestBook();
 
         testBookDao.create(testBook);
 

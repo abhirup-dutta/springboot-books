@@ -1,5 +1,6 @@
 package com.abhi.books.dao.impl;
 
+import com.abhi.books.TestUtil;
 import com.abhi.books.domain.Author;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -7,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -24,11 +24,7 @@ public class AuthorDaoImplTests {
 
     @Test
     public void test_CreateAuthor() {
-        Author testAuthor = Author.builder()
-                .id(1L)
-                .name("Ursula le Guin")
-                .age(0) // Dead :(
-                .build();
+        Author testAuthor = TestUtil.getTestAuthor();
 
         /*
          * Within the authorDaoTest, there is a jdbcTemplate.
@@ -58,7 +54,7 @@ public class AuthorDaoImplTests {
     @Test
     public void test_FindById() {
 
-        long testAuthorId = 1L;
+        long testAuthorId = TestUtil.getTestAuthor().getId();
 
         testAuthorDao.findById(testAuthorId);
 

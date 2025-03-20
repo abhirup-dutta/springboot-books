@@ -1,6 +1,7 @@
 package com.abhi.books;
 
 import lombok.extern.java.Log;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,7 +15,8 @@ public class BooksApplication implements CommandLineRunner {
 
 	private final DataSource dataSource;
 
-	public BooksApplication(DataSource dataSource) {
+	@Autowired
+	public BooksApplication(final DataSource dataSource) {
 		this.dataSource = dataSource;
 	}
 

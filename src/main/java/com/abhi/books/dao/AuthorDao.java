@@ -1,9 +1,11 @@
 package com.abhi.books.dao;
 
 import com.abhi.books.domain.Author;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
+@Component
 public interface AuthorDao {
 
     public void create(Author author);
