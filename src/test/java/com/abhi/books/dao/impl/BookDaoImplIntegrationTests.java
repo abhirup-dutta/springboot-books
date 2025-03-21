@@ -48,15 +48,8 @@ public class BookDaoImplIntegrationTests {
         /*
          * Tests -
          * Write into DB and then Query back from DB
-         *
-         * Check if the author entry is already present, if so, just create book entry
-         * Otherwise, create author entity in DB first, as its a foreign key
-         * constraint on book entry.
          */
-        Optional<Author> queryResultAuthor = supportAuthorDao.findById(authorIdOfBook);
-        if (queryResultAuthor.isEmpty()) {
-            supportAuthorDao.create(supportAuthor);
-        }
+        supportAuthorDao.safeCreate(supportAuthor);
         testBookDaoImpl.create(testBook);
         Optional<Book> queryResultBook = testBookDaoImpl.findByIsbn(testBook.getIsbn());
 

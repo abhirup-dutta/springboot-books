@@ -20,22 +20,42 @@ public class AuthorDaoImpl implements AuthorDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void create(Author author) {
-        this.jdbcTemplate.update(
-                "INSERT INTO authors (id, name, age) VALUES (?, ?, ?)",
-                author.getId(),
-                author.getName(),
-                author.getAge()
+    /*
+     * Check if the author entry is already present,
+     * Only if not, then create author entity in DB
+     * If present, do nothing
+     */
+    public void safeCreate(Author author) {
+        List<Author> queryResultAuthorList = jdbcTemplate.query(
+                "SELECT id, name, age FROM authors WHERE id = ?",
+                new AuthorRowMapper(),
+                author.getId()
         );
+        if(queryResultAuthorList.isEmpty()) {
+            jdbcTemplate.update(
+                    "INSERT INTO authors (id, name, age) VALUES (?, ?, ?)",
+                    author.getId(),
+                    author.getName(),
+                    author.getAge()
+            );
+        }
     }
 
     public Optional<Author> findById(long authorId) {
-        List<Author> authorList = this.jdbcTemplate.query(
+        List<Author> authorList = jdbcTemplate.query(
           "SELECT id, name, age FROM authors WHERE id = ? LIMIT 1",
           new AuthorRowMapper(),
           authorId
         );
         return authorList.stream().findFirst();
+    }
+
+    public List<Author> findPastAuthors() {
+        return jdbcTemplate.query(
+          "SELECT id, name, age FROM authors WHERE age = ?",
+          new AuthorRowMapper(),
+          IS_DEAD
+        );
     }
 
     /*

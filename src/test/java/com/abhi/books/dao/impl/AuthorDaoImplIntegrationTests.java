@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +33,7 @@ public class AuthorDaoImplIntegrationTests {
          * Tests -
          * Write into DB, and then Query back from DB
          */
-        testAuthorDaoImpl.create(testAuthor);
+        testAuthorDaoImpl.safeCreate(testAuthor);
         Optional<Author> queryResultAuthor = testAuthorDaoImpl.findById(testAuthor.getId());
 
         /*
@@ -41,5 +42,21 @@ public class AuthorDaoImplIntegrationTests {
          */
         assertThat(queryResultAuthor).isPresent();
         assertThat(queryResultAuthor.get()).isEqualTo(testAuthor);
+    }
+
+    @Test
+    public void test_CreateAuthorList_QueryPastAuthors() {
+
+        List<Author> authorList = TestUtil.getTestAuthorList();
+        List<Author> pastAuthors = TestUtil.getPastAuthors();
+        int numberOfPastAuthors = pastAuthors.size();
+
+        for (Author author : authorList) {
+            testAuthorDaoImpl.safeCreate(author);
+        }
+        List<Author> queryResultPastAuthors = testAuthorDaoImpl.findPastAuthors();
+
+        assertThat(queryResultPastAuthors).hasSize(numberOfPastAuthors)
+                .containsExactly(pastAuthors.toArray(new Author[0]));
     }
 }

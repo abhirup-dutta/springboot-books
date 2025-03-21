@@ -9,6 +9,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -20,7 +22,7 @@ public class AuthorDaoImplTests {
     private JdbcTemplate jdbcTemplate;
 
     @InjectMocks
-    private AuthorDaoImpl testAuthorDao;
+    private AuthorDaoImpl testAuthorDaoImpl;
 
     @Test
     public void test_CreateAuthor() {
@@ -32,7 +34,7 @@ public class AuthorDaoImplTests {
          * When create() is invoked, it uses the jdbcTemplate for DB update
          * However, here a mocked jdbcTemplate is used.
          */
-        testAuthorDao.create(testAuthor);
+        testAuthorDaoImpl.safeCreate(testAuthor);
 
         /*
          * Here, verify verifies if the mocked entity was interacted with
@@ -56,12 +58,24 @@ public class AuthorDaoImplTests {
 
         long testAuthorId = TestUtil.getTestAuthor().getId();
 
-        testAuthorDao.findById(testAuthorId);
+        testAuthorDaoImpl.findById(testAuthorId);
 
         verify(jdbcTemplate).query(
           eq("SELECT id, name, age FROM authors WHERE id = ? LIMIT 1"),
           any(AuthorDaoImpl.AuthorRowMapper.class),
           eq(testAuthorId)
+        );
+    }
+
+    @Test
+    public void test_FindPastAuthors() {
+
+        List<Author> pastAuthorList = testAuthorDaoImpl.findPastAuthors();
+
+        verify(jdbcTemplate).query(
+                eq("SELECT id, name, age FROM authors WHERE age = ?"),
+                any(AuthorDaoImpl.AuthorRowMapper.class),
+                eq(AuthorDaoImpl.IS_DEAD)
         );
     }
 }
