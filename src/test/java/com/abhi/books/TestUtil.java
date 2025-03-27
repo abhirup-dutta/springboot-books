@@ -1,6 +1,5 @@
 package com.abhi.books;
 
-import com.abhi.books.dao.AuthorDao;
 import com.abhi.books.domain.Author;
 import com.abhi.books.domain.Book;
 
@@ -10,7 +9,8 @@ import java.util.List;
 public class TestUtil {
 
     private static final long COMMON_AUTHOR_ID = 1L;
-    private static final Integer IS_DEAD = 0;
+    private static final int IS_DEAD = 0;
+    private static final int TEST_AGE = 80;
 
     public static Author getTestAuthor() {
         return Author.builder()
@@ -45,7 +45,7 @@ public class TestUtil {
         List<Author> pastAuthorList = new ArrayList<Author>();
 
         for (Author author : allAuthorList) {
-            if (author.getAge() == AuthorDao.IS_DEAD) {
+            if (author.getAge() == IS_DEAD) {
                 pastAuthorList.add(author);
             }
         }
@@ -57,7 +57,24 @@ public class TestUtil {
         return Book.builder()
                 .isbn("M7B59")
                 .title("The Left Hand of Darkness")
-                .authorId(COMMON_AUTHOR_ID)
+                .author(getTestAuthor())
                 .build();
+    }
+
+    public static int getTestAge() {
+        return TEST_AGE;
+    }
+
+    public static int get_NoOfAuthors_AgeLessThan(Boolean includePast) {
+        List<Author> allAuthorList = getTestAuthorList();
+        int num = 0;
+
+        for (Author author : allAuthorList) {
+            if ( (author.getAge() < TEST_AGE) &&
+                    (author.getAge() > 0 || includePast == Boolean.TRUE)) {
+                num = num + 1;
+            }
+        }
+        return num;
     }
 }
