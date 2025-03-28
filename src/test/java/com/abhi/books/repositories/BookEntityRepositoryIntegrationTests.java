@@ -1,10 +1,8 @@
 package com.abhi.books.repositories;
 
 import com.abhi.books.TestUtil;
-import com.abhi.books.domain.Author;
-import com.abhi.books.domain.Book;
-import com.abhi.books.repositories.AuthorRepository;
-import com.abhi.books.repositories.BookRepository;
+import com.abhi.books.domain.entities.AuthorEntity;
+import com.abhi.books.domain.entities.BookEntity;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
-public class BookRepositoryIntegrationTests {
+public class BookEntityRepositoryIntegrationTests {
 
     /*
      * AuthorDao is required because in the DB,
@@ -33,7 +31,7 @@ public class BookRepositoryIntegrationTests {
     private final AuthorRepository supportAuthorRepo;
 
     @Autowired
-    public BookRepositoryIntegrationTests(BookRepository testBookRepo, AuthorRepository supportAuthorRepo) {
+    public BookEntityRepositoryIntegrationTests(BookRepository testBookRepo, AuthorRepository supportAuthorRepo) {
         this.testBookRepo = testBookRepo;
         this.supportAuthorRepo = supportAuthorRepo;
     }
@@ -41,24 +39,24 @@ public class BookRepositoryIntegrationTests {
     @Test
     public void test_CreateBook_QuerySameBook() {
 
-        Book testBook = TestUtil.getTestBook();
-        long authorIdOfBook = testBook.getAuthor().getId();
-        Author supportAuthor = TestUtil.getTestAuthor();
-        supportAuthor.setId(authorIdOfBook);
+        BookEntity testBookEntity = TestUtil.getTestBook();
+        long authorIdOfBook = testBookEntity.getAuthorEntity().getId();
+        AuthorEntity supportAuthorEntity = TestUtil.getTestAuthor();
+        supportAuthorEntity.setId(authorIdOfBook);
 
         /*
          * Tests -
          * Write into DB and then Query back from DB
          */
-        supportAuthorRepo.save(supportAuthor);
-        testBookRepo.save(testBook);
-        Optional<Book> queryResultBook = testBookRepo.findById(testBook.getIsbn());
+        supportAuthorRepo.save(supportAuthorEntity);
+        testBookRepo.save(testBookEntity);
+        Optional<BookEntity> queryResultBook = testBookRepo.findById(testBookEntity.getIsbn());
 
         /*
          * Verifications -
          * Result is present, and same as original object
          */
         assertThat(queryResultBook).isPresent();
-        assertThat(queryResultBook.get()).isEqualTo(testBook);
+        assertThat(queryResultBook.get()).isEqualTo(testBookEntity);
     }
 }
