@@ -4,6 +4,8 @@ import com.abhi.books.domain.dto.AuthorDto;
 import com.abhi.books.domain.entities.AuthorEntity;
 import com.abhi.books.mappers.Mapper;
 import com.abhi.books.services.AuthorService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,9 +30,10 @@ public class AuthorController {
      * and converts it from JSON to the Java object Author
      */
     @PostMapping(path = "/authors")
-    public AuthorDto createAuthor(@RequestBody AuthorDto authorDto) {
+    public ResponseEntity<AuthorDto> createAuthor(@RequestBody AuthorDto authorDto) {
         AuthorEntity authorEntityToCreate = authorMapper.mapFrom(authorDto);
         AuthorEntity authorEntitySaved = authorService.createAuthor(authorEntityToCreate);
-        return authorMapper.mapTo(authorEntitySaved);
+        AuthorDto authorSavedDto = authorMapper.mapTo(authorEntitySaved);
+        return new ResponseEntity<>(authorSavedDto, HttpStatus.CREATED);
     }
 }
